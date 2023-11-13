@@ -1427,7 +1427,6 @@ ows_cfg = {
         # in the GetCapabilities documents based on the requesting url
         "allowed_urls": ["http://localhost/odc_ows",
                           "https://localhost/odc_ows",
-                          "https://alternateurl.domain.org/odc_ows",
                           "http://127.0.0.1:8000/"],
         # URL that humans can visit to learn more about the service(s) or organization
         # should be fully qualified
@@ -1439,26 +1438,26 @@ ows_cfg = {
         # Optional - defaults to empty list.
         "keywords": [
             "satellite",
-            "australia",
+            "opendatacube",
             "time-series",
         ],
         # Contact info.
         # Optional but strongly recommended - defaults to blank.
         "contact_info": {
-            "person": "Firstname Surname",
-            "organisation": "Acme Corporation",
-            "position": "CIO (Chief Imaginary Officer)",
+            "person": "Konstantinos Papapanagiotou",
+            "organisation": "RENVIS",
+            "position": "CEO",
             "address": {
                 "type": "postal",
-                "address": "GPO Box 999",
-                "city": "Metropolis",
-                "state": "North Arcadia",
-                "postcode": "12345",
-                "country": "Elbonia",
+                "address": "Pasalidi 10",
+                "city": "Thessaloniki",
+                "state": "Thessaloniki",
+                "postcode": "54453",
+                "country": "Greece",
             },
-            "telephone": "+61 2 1234 5678",
-            "fax": "+61 2 1234 6789",
-            "email": "test@example.com",
+            "telephone": "+306974116057",
+            "fax": "-",
+            "email": "info@renvis.gr",
         },
         # Attribution.
         #
@@ -1468,9 +1467,9 @@ ows_cfg = {
         "attribution": {
             # Attribution must contain at least one of ("title", "url" and "logo")
             # A human readable title for the attribution - e.g. the name of the attributed organisation
-            "title": "Acme Satellites",
+            "title": "AWS",
             # The associated - e.g. URL for the attributed organisation
-            "url": "http://www.acme.com/satellites",
+            "url": "http://aws.amazon.com",
             # Logo image - e.g. for the attributed organisation
             "logo": {
                 # Image width in pixels (optional)
@@ -1525,7 +1524,7 @@ ows_cfg = {
         # All Optional
         "s3_url": "http://data.au",
         "s3_bucket": "s3_bucket_name",
-        "s3_aws_zone": "ap-southeast-2",
+        "s3_aws_zone": "us-west-2",
         # Max tile height/width for wms.  (N.B. Does not apply to WMTS)
         # Optional, defaults to 256x256
         "max_width": 512,
