@@ -1434,7 +1434,7 @@ ows_cfg = {
         # Which web service(s) should be implemented by this instance
         # Optional, defaults: wms,wmts: True, wcs: False
         "services": {
-            "wms": True,
+            "wms": False,
             "wmts": True,
             "wcs": True
         },
@@ -1681,12 +1681,6 @@ ows_cfg = {
                     "native_crs": "EPSG:32634",
                     "native_resolution": [10.0, 10.0],
                     "flags": [
-                        {
-                        "band": "coastal",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": False,
-                        },
                         {"band": "red",
                         "ignore_time": False,
                         "ignore_info_flags": [],
