@@ -1837,7 +1837,7 @@ ows_cfg = {
                         # in the global wcs formats section.
                         # Optional: if not supplied defaults to the
                         # globally defined native_format.
-                        "native_format": "GeoTIFF"
+                        "native_format": "NetCDF"
                     },
                     # Each key of the identifiers dictionary must match a name from the authorities dictionary
                     # in the global section.  The values are the identifiers defined for this layer by that
