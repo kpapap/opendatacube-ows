@@ -76,24 +76,6 @@ sentinel2_bands = {
     "quality": [],
 }
 
-bands_sentinel = {
-    "coastal": ["band_01","coastal_aerosol", "B01"],
-    "blue": ["band_02", "blue", "B02"],
-    "green": ["band_03", "green", "B03"],
-    "red": ["band_04", "red", "B04"],
-    "rededge1": ["band_05", "red_edge_1", "B05"],
-    "rededge2": ["band_06", "red_edge_2", "B06"],
-    "rededge3": ["band_07", "red_edge_3", "B07"],
-    "nir": ["band_08", "nir", "nir_1", "B08"],
-    "nir08": ["band_8a", "nir_narrow", "nir_2", "B8A"],
-    "nir09": ["band_09", "water_vapour", "B09"],
-    "swir16": ["band_11", "swir_1", "swir_16", "B11"],
-    "swir22": ["band_12", "swir_2", "swir_22", "B12"],
-    "aot": ["aerosol_optical_thickness", "AOT"],
-    "wvp": ["scene_average_water_vapour", "WVP"],
-    "scl": ["mask", "qa", "SCL"],
-}
-
 # REUSABLE CONFIG FRAGMENTS - Style definitions
 
 # Examples of styles which are linear combinations of the available spectral bands.
@@ -1445,6 +1427,7 @@ ows_cfg = {
         # in the GetCapabilities documents based on the requesting url
         "allowed_urls": ["http://localhost/odc_ows",
                           "https://localhost/odc_ows",
+                          "https://alternateurl.domain.org/odc_ows",
                           "http://127.0.0.1:8000/"],
         # URL that humans can visit to learn more about the service(s) or organization
         # should be fully qualified
@@ -1456,26 +1439,26 @@ ows_cfg = {
         # Optional - defaults to empty list.
         "keywords": [
             "satellite",
-            "opendatacube",
+            "australia",
             "time-series",
         ],
         # Contact info.
         # Optional but strongly recommended - defaults to blank.
         "contact_info": {
-            "person": "Konstantinos Papapanagiotou",
-            "organisation": "RENVIS",
-            "position": "CEO",
+            "person": "Firstname Surname",
+            "organisation": "Acme Corporation",
+            "position": "CIO (Chief Imaginary Officer)",
             "address": {
                 "type": "postal",
-                "address": "Pasalidi 10",
-                "city": "Thessaloniki",
-                "state": "Thessaloniki",
-                "postcode": "54453",
-                "country": "Greece",
+                "address": "GPO Box 999",
+                "city": "Metropolis",
+                "state": "North Arcadia",
+                "postcode": "12345",
+                "country": "Elbonia",
             },
-            "telephone": "+306974116057",
-            "fax": "-",
-            "email": "info@renvis.gr",
+            "telephone": "+61 2 1234 5678",
+            "fax": "+61 2 1234 6789",
+            "email": "test@example.com",
         },
         # Attribution.
         #
@@ -1485,9 +1468,9 @@ ows_cfg = {
         "attribution": {
             # Attribution must contain at least one of ("title", "url" and "logo")
             # A human readable title for the attribution - e.g. the name of the attributed organisation
-            "title": "AWS",
+            "title": "Acme Satellites",
             # The associated - e.g. URL for the attributed organisation
-            "url": "http://aws.amazon.com",
+            "url": "http://www.acme.com/satellites",
             # Logo image - e.g. for the attributed organisation
             "logo": {
                 # Image width in pixels (optional)
@@ -1542,7 +1525,7 @@ ows_cfg = {
         # All Optional
         "s3_url": "http://data.au",
         "s3_bucket": "s3_bucket_name",
-        "s3_aws_zone": "us-west-2",
+        "s3_aws_zone": "ap-southeast-2",
         # Max tile height/width for wms.  (N.B. Does not apply to WMTS)
         # Optional, defaults to 256x256
         "max_width": 512,
@@ -1831,7 +1814,7 @@ ows_cfg = {
                         # 2. Must contain at least one band.
                         # 3. All bands must exist in the band index.
                         # 4. Bands may be referred to by either native name or alias
-                        # WCS default_bands list is no longer supported. Functionally, the default behaviour is now to return all available bands (as mandated by the WCS2.x spec) "default_bands": ["red", "green", "blue"],
+                        "default_bands": ["red", "green", "blue"],
                         # The native format advertised for the coverage.
                         # Must be one of the formats defined
                         # in the global wcs formats section.
@@ -2071,61 +2054,7 @@ ows_cfg = {
                         "default_style": "simple_rgb",
                         "styles": [style_rgb],
                     }
-                }, ##### End of sentinel2_nrt multi-product definition
-                {
-                    # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
-                    "title": "Images from Sentinel-2 L2A Satellites",
-                    "abstract": "Imagery from the ESA Sentinel2 L2A Satellites",
-                    "name": "sentinel2_l2a",
-                    # Multi-product layers merge two separate datacube products with similar metadata (i.e.
-                    # projections, bands, pixel quality band format, etc.)
-                    "multi_product": False,
-                    # For multi-product layers, use "product_names" for the list of constituent ODC products.
-                    "product_name": "s2_l2a",
-                    "bands": bands_sentinel,
-                    "resource_limits": standard_resource_limits,
-                    # Near Real Time datasets are being regularly updated - do not cache ranges in memory.
-                    "dynamic": True,
-                    "native_crs": "EPSG:32634",
-                    "native_resolution": [10.0, 10.0],
-                    "flags": {
-                        "band": "quality",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": False,
-                    },
-                    "image_processing": {
-                        "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
-                        "always_fetch_bands": [],
-                        "fuse_func": None,
-                        "manual_merge": False,
-                        "apply_solar_corrections": False,
-                    },
-                    "wcs": {
-                        "default_bands": ["red", "green", "blue"],
-                    },
-                    "identifiers": {
-                        "auth": "s2_l2a",
-                    },
-                    "urls": {
-                        "features": [
-                            {
-                                "url": "http://52.24.100.183:9001/about",
-                                "format": "text/html"
-                            }
-                        ],
-                        "data": [
-                            {
-                                "url": "http://52.24.100.183:9001/stac",
-                                "format": "application/json"
-                            }
-                        ]
-                    },
-                    "styling": {
-                        "default_style": "simple_rgb",
-                        "styles": [style_rgb],
-                    }
-                } ##### End of sentinel2_l2a multi-product definition
+                } ##### End of sentinel2_nrt multi-product definition
             ],
         },   #### End of Sentinel-2 folder
         {

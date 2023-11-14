@@ -1658,410 +1658,12 @@ ows_cfg = {
     "layers": [
         {
             # NOTE: This layer is a folder - it is NOT "named layer" that can be selected in GetMap requests
-            # Every layer must have a human-readable title
-            "title": "Landsat 8",
-            # Top level layers must have a human-readable abstract. The abstract is optional for child-layers - defaulting
-            # to that of the parent layer.
-            "abstract": "Images from the Landsat 8 satellite",
-            # NOTE: Folder-layers do not have a layer "name".
-
-            # Keywords are optional, but can be added at any folder level and are cumulative.
-            # A layer combines its own keywords, the keywords of it's parent (and grandparent, etc) layers,
-            # and any keywords defined in the global section above.
-            #
-            "keywords": [
-                "landsat",
-                "landsat8",
-            ],
-            # Attribution.  This entire section is optional.  If provided, it overrides any
-            #               attribution defined in the wms section above or any higher layers, and
-            #               applies to this layer and all child layers under this layer unless itself
-            #               overridden.
-            "attribution": {
-                # Attribution must contain at least one of ("title", "url" and "logo")
-                # A human readable title for the attribution - e.g. the name of the attributed organisation
-                "title": "Digital Earth Australia",
-                # The associated - e.g. URL for the attributed organisation
-                "url": "http://www.ga.gov.au/dea",
-                # Logo image - e.g. for the attributed organisation
-                "logo": {
-                    # Image width in pixels (optional)
-                    "width": 370,
-                    # Image height in pixels (optional)
-                    "height": 73,
-                    # URL for the logo image. (required if logo specified)
-                    "url": "https://www.ga.gov.au/__data/assets/image/0011/61589/GA-DEA-Logo-Inline-370x73.png",
-                    # Image MIME type for the logo - should match type referenced in the logo url (required if logo specified.)
-                    "format": "image/png",
-                }
-            },
-            # Folder-type layers include a list of sub-layers
-            "layers": [
-                {
-                    # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
-                    # Every layer must have a distinct human-readable title and abstract.
-                    "title": "Level 2 DEA NBART Landsat-8 Data",
-                    "abstract": "Imagery from DEA's Level 2 NBART Analysis-Ready Data Set",
-                    # Mappable layers must have a name - this is the layer name that appears in WMS GetMap
-                    # or WMTS GetTile requests and the coverage name that appears in WCS
-                    # DescribeCoverage/GetCoverage requests.
-                    "name": "ls8_nbart_albers",
-                    # The ODC product name for the associated data product
-                    "product_name": "ls8_nbart_albers",
-
-                    # Supported bands, mapping native band names to a list of possible aliases.
-                    # See reusable band alias maps above for documentation.
-                    "bands": landsat8_bands,
-                    # Resource limits.
-                    # See reusable resource limit declarations above for documentation.
-                    "resource_limits": standard_resource_limits,
-                    # If "dynamic" is False (the default) the the ranges for the product are cached in memory.
-                    # Dynamic products slow down the generation of the GetCapabilities document - use sparingly.
-                    "dynamic": False,
-                    # The resolution of the time access.  Optional. Allowed values are:
-                    # * "raw" (the default - data with timestamps to be according to the local solar day)
-                    # * "day" (daily data with date-resolution time stamps)
-                    # * "month" (for monthly summary datasets)
-                    # * "year" (for annual summary datasets)
-                    "time_resolution": "solar",
-                    # The "native" CRS.  (as used for resource management calculations and WCS metadata)
-                    # (Used for resource management calculations and WCS metadata)
-                    # Must be in the global "published_CRSs" list.
-                    # Can be omitted if the product has a single native CRS, as this will be used in preference.
-                    "native_crs": "EPSG:3577",
-                    # The native resolution (x,y)
-                    # (Used for resource management calculations and WCS metadata)
-                    # This is the number of CRS units (e.g. degrees, metres) per pixel in the horizontal
-                    # and vertical directions for the native CRS.
-                    # Can be omitted if the product has a single native resolution, as this will be used in preference.
-                    # E.g. for EPSG:3577; (25.0,25.0) for Landsat-8 and (10.0,10.0 for Sentinel-2)
-                    "native_resolution": [25.0, 25.0],
-                    "flags": {
-                        # Data may include flags that mark which pixels have missing or poor-quality data,
-                        # or contain cloud, or cloud-shadow, etc.  This section describes how
-                        # datacube_ows handles such flags.  The entire section may be omitted if no
-                        # flag masking is to be supported by the layer.
-                        #
-                        # Items in this section affect WMS/WMTS requests only, unless explicitly stated
-                        # otherwise.
-                        #
-                        # The name of the measurement band for the pixel-quality flags
-                        # Pixel-quality bitmasks and flags can be used for image/data masking.
-                        #
-                        # Required, unless the whole "flags" section is empty or None.
-                        #
-                        # Single flag bands not in a list is deprecated. Please refer to the documentation for the new format "band": "pixelquality",
-                        # Sometimes the pixel quality band is packaged in a separate ODC product
-                        # If this is the case, you can specify this product with the "flags::product"
-                        # element.  If "flags::band" is set but "flags::product" is omitted, then the
-                        # pixel quality band is assumed to be included in the main data product.
-                        "product": "ls8_pq_albers",
-                        # Flags Fuse func
-                        # Determines how multiple dataset arrays are compressed into a single time array for
-                        # the PQ layer
-                        #
-                        # Two formats are supported:
-                        # 1. A string containing a fully qualified path to a python function (e.g. as shown below)
-                        #
-                        # 2. A dict containing the following elements:
-                        #    a) "function" (required): A string containing the fully qualified path to a python function
-                        #    b) "args" (optional): An array of additional positional arguments that will always be passed to the function.
-                        #    c) "kwargs" (optional): An array of additional keyword arguments that will always be passed to the function.
-                        #    d) "mapped_bands" (optional): Boolean (defaults to False). If true, a band mapping function is passed
-                        #       to the function as a keyword argument named "band_mapper".  This is useful if you are passing band aliases
-                        #       to the function in the args or kwargs.  The band_mapper allows the index function to convert band aliases to
-                        #       to band names.
-                        #
-                        # Passed directly to the datacube load_data function.  Defaults to None.
-                        "fuse_func": "datacube.helpers.ga_pq_fuser",
-                        # Flags Ignore time
-                        # Doesn't use the time from the data to find a corresponding mask layer
-                        # Used when you have a mask layer that doesn't have a time dimension
-                        #
-                        # Defaults to False
-                        "ignore_time": False,
-                        # Values of flags listed here are not included in GetFeatureInfo responses.
-                        # (defaults to empty list)
-                        "ignore_info_flags": [],
-                        # Set to true if the pq product dataset extents include nodata regions.
-                        #
-                        # Default to False.
-                        "manual_merge": False,
-                    },
-                    # The image_processing section must be supplied.
-                    "image_processing": {
-                        # Extent mask function
-                        # Determines what portions of dataset is potentially meaningful data.
-                        #
-                        # All the formats described above for "flags->fuse_func" are
-                        # supported here as well.
-                        #
-                        # Additionally, multiple extent mask functions can be specified as a list of any of
-                        # supported formats.  The result is the intersection of all supplied mask functions.
-                        #
-                        # The function is assumed to take two arguments, data (an xarray Dataset) and band (a band name).  (Plus any additional
-                        # arguments required by the args and kwargs values in format 3, possibly including product_cfg.)
-                        #
-                        "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
-                        # Bands to always fetch from the Datacube, even if it is not used by the active style.
-                        # Useful for when a particular band is always needed for the extent_mask_func,
-                        "always_fetch_bands": [],
-                        # Fuse func
-                        #
-                        # Determines how multiple dataset arrays are compressed into a single time array
-                        # All the formats described above for "extent_mask_func" are supported here as well.
-                        # (Passed through to datacube load_data() function.)
-                        #
-                        # Defaults to None.
-                        "fuse_func": None,
-                        # Set to true if the band product dataset extents include nodata regions.
-                        # Defaults to False.
-                        "manual_merge": False,
-                        # Apply corrections for solar angle, for "Level 1" products.
-                        # (Defaults to false - should not be used for NBAR/NBAR-T or other Analysis Ready products
-                        "apply_solar_corrections": False,
-                    },
-                    # If the WCS section is not supplied, then this named layer will NOT appear as a WCS
-                    # coverage (but will still be a layer in WMS and WMTS).
-                    "wcs": {
-
-                        # The default bands for a WCS request.
-                        # 1. Must be provided if WCS is activated.
-                        # 2. Must contain at least one band.
-                        # 3. All bands must exist in the band index.
-                        # 4. Bands may be referred to by either native name or alias
-                        # WCS default_bands list is no longer supported. Functionally, the default behaviour is now to return all available bands (as mandated by the WCS2.x spec) "default_bands": ["red", "green", "blue"],
-                        # The native format advertised for the coverage.
-                        # Must be one of the formats defined
-                        # in the global wcs formats section.
-                        # Optional: if not supplied defaults to the
-                        # globally defined native_format.
-                        "native_format": "GeoTIFF"
-                    },
-                    # Each key of the identifiers dictionary must match a name from the authorities dictionary
-                    # in the global section.  The values are the identifiers defined for this layer by that
-                    # authority.
-                    "identifiers": {
-                        "auth": "ls8_ard",
-                        "idsrus": "12345435::0054234::GHW::24356-splunge"
-                    },
-                    # The urls section provides the values that are included in the FeatureListURLs and
-                    # DataURLs sections of a WMS GetCapabilities document.
-                    # Multiple of each may be defined per product.
-                    #
-                    # The entire section the "features and "data" subsections within it are optional. The
-                    # default is an empty list(s).
-                    #
-                    # Each individual entry must include a url and MIME type format.
-                    #
-                    # FeatureListURLs point to "a list of the features represented in a Layer".
-                    # DataURLs "offer a link to the underlying data represented by a particular layer"
-                    "urls": {
-                        "features": [
-                            {
-                                "url": "http://domain.tld/path/to/page.html",
-                                "format": "text/html"
-                            },
-                            {
-                                "url": "http://another-domain.tld/path/to/image.png",
-                                "format": "image/png"
-                            }
-                        ],
-                        "data": [
-                            {
-                                "url": "http://abc.xyz/data-link.xml",
-                                "format": "application/xml"
-                            }
-                        ]
-                    },
-                    # The feature_info section is optional.
-                    "feature_info": {
-                        # Include an additional list of utc dates in the WMS Get Feature Info. Defaults to False.
-                        # HACK: only used for GSKY non-solar day lookup.
-                        "include_utc_dates": False,
-                        # Optional: custom data to be included in GetFeatureInfo responses.  Defaults to an empty
-                        # dictionary.
-                        # Keys are the keys to insert into the GetFeatureInfo response.  Values are function wrappers,
-                        # using the same format options available elsewhere in the config.  Specified functions are
-                        # expected to be passed a dictionary of band values (as parameter "data") and return any data
-                        # that can be serialised to JSON.
-                        "include_custom": {
-                            "timeseries": {
-                                "function": "datacube_ows.ogc_utils.feature_info_url_template",
-                                "mapped_bands": False,
-                                "kwargs": {
-                                    "template": "https://host.domain/path/{data['f_id']:06}.csv"
-                                }
-                            }
-                        }
-                    },
-                    # The sub_products section is optional.
-                    "sub_products": {
-                        # A function that extracts the "sub-product" id (e.g. path number) from a dataset.
-                        # Function should return a (small) integer.  If None or not specified, the product
-                        # has no sub-layers.
-                        # All the formats supported for extent_mask_func as described above are supported here.
-                        # The function is assumed to take a datacube dataset object and return an integer
-                        # sub-product id.
-                        "extractor": "datacube_ows.ogc_utils.ls8_subproduct",
-                        # A prefix used to describe the sub-layer in the GetCapabilities response.
-                        # E.g. sub-layer 109 will be described as "Landsat Path 109"
-                        "label": "Landsat Path",
-                    },
-                    # Style definitions
-                    # The "styling" section is required
-                    "styling": {
-                        # The default_style is the style used when no style is explicitly given in the
-                        # request.  If given, it must be the name of a style in the "styles" list. If
-                        # not explictly defined it defaults to the first style in "styles" list.
-                        "default_style": "simple_rgb",
-                        # The "styles" list must be explicitly supplied, and must contain at least one
-                        # style.  See reusable style definitions above for more documentation on
-                        # defining styles.
-                        "styles": [
-                            style_rgb, style_rgb_cloudmask, style_rgb_cloud_and_shadowmask,
-                            style_ext_rgb, style_ls8_allband_false_colour, style_infrared_false_colour,
-                            style_pure_ls8_coastal_aerosol, style_pure_ls8_blue,
-                            style_pure_ls8_green, style_pure_ls8_red,
-                            style_pure_ls8_nir, style_pure_ls8_swir1, style_pure_ls8_swir2,
-                            style_ndvi, style_ndvi_cloudmask,
-                            style_ndwi, style_ndbi,
-                            style_cloud_mask,
-                            style_rgb_ndvi
-                        ]
-                    }
-                }, #### End of ls8_nbart_albers product
-                {
-                    # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
-                    "title": "Level 1 USGS Landsat-8 Public Data Set",
-                    "abstract": "Imagery from the Level 1 Landsat-8 USGS Public Data Set",
-                    "name": "ls8_level1_pds",
-                    "product_name": "ls8_level1_usgs",
-                    "bands": landsat8_bands,
-                    "resource_limits": standard_resource_limits,
-                    # native_crs and native_resolution taken from product meta-data
-                    "flags": {
-                        # "band": "quality",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": True,
-                    },
-                    "image_processing": {
-                        # Extent mask function
-                        #
-                        # See documentation above.  This is an example of multiple extent_mask_functions.
-                        "extent_mask_func": [
-                            "datacube_ows.ogc_utils.mask_by_quality",
-                            "datacube_ows.ogc_utils.mask_by_val",
-                        ],
-                        # Bands to always fetch from the Datacube, even if it is not used by the active style.
-                        # Useful for when a particular band is always needed for the extent_mask_func, as
-                        # is the case here.
-                        "always_fetch_bands": ["quality"],
-                        "fuse_func": None,
-                        "manual_merge": True,
-                        # Apply corrections for solar angle, for "Level 1" products.
-                        # (Defaults to false - should not be used for NBAR/NBAR-T or other Analysis Ready products
-                        "apply_solar_corrections": True
-                    },
-                    "styling": {
-                        "default_style": "simple_rgb",
-                        "styles": [
-                            style_rgb, style_ext_rgb,
-                            style_ls8_allband_false_colour, style_infrared_false_colour,
-                            style_pure_ls8_coastal_aerosol, style_pure_ls8_blue,
-                            style_pure_ls8_green, style_pure_ls8_red,
-                            style_pure_ls8_nir, style_pure_ls8_swir1, style_pure_ls8_swir2,
-                            style_ndvi, style_ndwi, style_ndbi,
-                            style_rgb_ndvi
-                        ]
-                    }
-                }, ##### End of ls8_level1_pds product definition.
-
-
-                {
-                    # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
-                    "title": "WOfS Summary",
-                    "abstract": "Water Observations from Space - Summary",
-                    "name": "wofs_summary",
-                    "product_name": "wofs_summary",
-                    "bands": {"frequency": []},
-                    "resource_limits": standard_resource_limits,
-                    "flags": None,
-                    "native_crs": "EPSG:3857",
-                    "native_resolution": [25.0, 25.0],
-                    "image_processing": {
-                        "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
-                        "fuse_func": "datacube_ows.wms_utils.wofls_fuser",
-                    },
-                    "styling": {
-                        "styles": [
-                            style_wofs_frequency
-                        ]
-                    }
-                }, ##### End of wofs_summary product definition.
-
-            ]
-        },  ### End of Landsat 8 folder.
-        {
-            # NOTE: This layer is a folder - it is NOT "named layer" that can be selected in GetMap requests
             "title": "Sentinel-2 Products",
             "abstract": "Products containing data ultimately derived from ESA's Sentinel-2 satellite.",
             "keywords": [
                 "sentinel2",
             ],
             "layers": [
-                {
-                    # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
-                    "title": "Near Real-Time images from Sentinel-2 Satellites",
-                    "abstract": "Imagery from the ESA Sentinel2 Satellites",
-                    "name": "sentinel2_nrt",
-                    # Multi-product layers merge two separate datacube products with similar metadata (i.e.
-                    # projections, bands, pixel quality band format, etc.)
-                    "multi_product": True,
-                    # For multi-product layers, use "product_names" for the list of constituent ODC products.
-                    "product_names": ["s2a_nrt_granule", "s2b_nrt_granule"],
-                    "bands": sentinel2_bands,
-                    "resource_limits": standard_resource_limits,
-                    # Near Real Time datasets are being regularly updated - do not cache ranges in memory.
-                    "dynamic": True,
-                    "native_crs": "EPSG:3577",
-                    "native_resolution": [10.0, 10.0],
-                    "flags": {
-                        # "band": "quality",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": False,
-                    },
-                    "image_processing": {
-                        "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
-                        "always_fetch_bands": [],
-                        "fuse_func": None,
-                        "manual_merge": False,
-                        "apply_solar_corrections": False,
-                    },
-                    "identifiers": {
-                        "auth": "s2_nrt_multi",
-                    },
-                    "urls": {
-                        "features": [
-                            {
-                                "url": "http://domain.tld/path/to/page.html",
-                                "format": "text/html"
-                            }
-                        ],
-                        "data": [
-                            {
-                                "url": "http://abc.xyz/data-link.xml",
-                                "format": "application/xml"
-                            }
-                        ]
-                    },
-                    "styling": {
-                        "default_style": "simple_rgb",
-                        "styles": [style_rgb],
-                    }
-                }, ##### End of sentinel2_nrt multi-product definition
                 {
                     # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
                     "title": "Images from Sentinel-2 L2A Satellites",
@@ -2078,12 +1680,29 @@ ows_cfg = {
                     "dynamic": True,
                     "native_crs": "EPSG:32634",
                     "native_resolution": [10.0, 10.0],
-                    "flags": {
-                        # "band": "quality",
+                    "flags": [
+                        {
+                        "band": "coastal",
                         "ignore_time": False,
                         "ignore_info_flags": [],
                         "manual_merge": False,
-                    },
+                        },
+                        {"band": "red",
+                        "ignore_time": False,
+                        "ignore_info_flags": [],
+                        "manual_merge": False,
+                        },
+                        {"band": "green",
+                        "ignore_time": False,
+                        "ignore_info_flags": [],
+                        "manual_merge": False,
+                        },
+                        {"band": "blue",
+                        "ignore_time": False,
+                        "ignore_info_flags": [],
+                        "manual_merge": False,
+                        }
+                    ],
                     "image_processing": {
                         "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
                         "always_fetch_bands": [],
@@ -2112,47 +1731,9 @@ ows_cfg = {
                         "default_style": "simple_rgb",
                         "styles": [style_rgb],
                     }
-                } ##### End of sentinel2_l2a multi-product definition
+                } ##### End of sentinel2_l2a single-product definition
             ],
         },   #### End of Sentinel-2 folder
-        {
-            # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
-            # NOTE: Named layers can sit at the same heirarchical level as folder layers.
-            "name": "mangrove_cover",
-            "title": "Mangrove Canopy Cover",
-            "abstract": "Mangrove Canopy Cover - example of bitflag value-mapped style.",
-            "product_names": "mangrove_cover",
-            "bands": {"canopy_cover_class": [], "extent": []},
-            "resource_limits": standard_resource_limits,
-            "flags": None,
-            "image_processing": {
-                "extent_mask_func": "datacube_ows.ogc_utils.mask_by_extent_flag",
-                "always_fetch_bands": ["extent"],
-                "fuse_func": None,
-                "manual_merge": False,
-                "apply_solar_corrections": False,
-            },
-            "identifiers": {
-                "auth": "mangrove_canopy_cover",
-            },
-            "urls": {
-                "features": [
-                    {
-                        "url": "http://domain.tld/path/to/page.html",
-                        "format": "text/html"
-                    }
-                ],
-                "data": [
-                    {
-                        "url": "http://abc.xyz/data-link.xml",
-                        "format": "application/xml"
-                    }
-                ]
-            },
-            "styling": {
-                "default_style": "mangrove",
-                "styles": [style_mangrove],
-            }
-        } ##### End of mangrove_cover definition
+        
     ]  ##### End of "layers" list.
 } #### End of example configuration object
