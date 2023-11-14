@@ -1750,7 +1750,7 @@ ows_cfg = {
                         #
                         # Required, unless the whole "flags" section is empty or None.
                         #
-                        "band": "pixelquality",
+                        # Single flag bands not in a list is deprecated. Please refer to the documentation for the new format "band": "pixelquality",
                         # Sometimes the pixel quality band is packaged in a separate ODC product
                         # If this is the case, you can specify this product with the "flags::product"
                         # element.  If "flags::band" is set but "flags::product" is omitted, then the
@@ -1941,7 +1941,7 @@ ows_cfg = {
                     "resource_limits": standard_resource_limits,
                     # native_crs and native_resolution taken from product meta-data
                     "flags": {
-                        "band": "quality",
+                        # "band": "quality",
                         "ignore_time": False,
                         "ignore_info_flags": [],
                         "manual_merge": True,
@@ -2028,7 +2028,7 @@ ows_cfg = {
                     "native_crs": "EPSG:3577",
                     "native_resolution": [10.0, 10.0],
                     "flags": {
-                        "band": "quality",
+                        # "band": "quality",
                         "ignore_time": False,
                         "ignore_info_flags": [],
                         "manual_merge": False,
@@ -2079,7 +2079,7 @@ ows_cfg = {
                     "native_crs": "EPSG:32634",
                     "native_resolution": [10.0, 10.0],
                     "flags": {
-                        "band": "quality",
+                        # "band": "quality",
                         "ignore_time": False,
                         "ignore_info_flags": [],
                         "manual_merge": False,
