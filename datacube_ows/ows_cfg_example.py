@@ -76,6 +76,24 @@ sentinel2_bands = {
     "quality": [],
 }
 
+bands_sentinel = {
+    "coastal": ["band_01","coastal_aerosol", "B01"],
+    "blue": ["band_02", "blue", "B02"],
+    "green": ["band_03", "green", "B03"],
+    "red": ["band_04", "red", "B04"],
+    "rededge1": ["band_05", "red_edge_1", "B05"],
+    "rededge2": ["band_06", "red_edge_2", "B06"],
+    "rededge3": ["band_07", "red_edge_3", "B07"],
+    "nir": ["band_08", "nir", "nir_1", "B08"],
+    "nir08": ["band_8a", "nir_narrow", "nir_2", "B8A"],
+    "nir09": ["band_09", "water_vapour", "B09"],
+    "swir16": ["band_11", "swir_1", "swir_16", "B11"],
+    "swir22": ["band_12", "swir_2", "swir_22", "B12"],
+    "aot": ["aerosol_optical_thickness", "AOT"],
+    "wvp": ["scene_average_water_vapour", "WVP"],
+    "scl": ["mask", "qa", "SCL"],
+}
+
 # REUSABLE CONFIG FRAGMENTS - Style definitions
 
 # Examples of styles which are linear combinations of the available spectral bands.
@@ -2053,7 +2071,61 @@ ows_cfg = {
                         "default_style": "simple_rgb",
                         "styles": [style_rgb],
                     }
-                } ##### End of sentinel2_nrt multi-product definition
+                }, ##### End of sentinel2_nrt multi-product definition
+                {
+                    # NOTE: This layer IS a mappable "named layer" that can be selected in GetMap requests
+                    "title": "Images from Sentinel-2 L2A Satellites",
+                    "abstract": "Imagery from the ESA Sentinel2 L2A Satellites",
+                    "name": "sentinel2_l2a",
+                    # Multi-product layers merge two separate datacube products with similar metadata (i.e.
+                    # projections, bands, pixel quality band format, etc.)
+                    "multi_product": False,
+                    # For multi-product layers, use "product_names" for the list of constituent ODC products.
+                    "product_name": "s2_l2a",
+                    "bands": bands_sentinel,
+                    "resource_limits": standard_resource_limits,
+                    # Near Real Time datasets are being regularly updated - do not cache ranges in memory.
+                    "dynamic": True,
+                    "native_crs": "EPSG:32634",
+                    "native_resolution": [10.0, 10.0],
+                    "flags": {
+                        "band": "quality",
+                        "ignore_time": False,
+                        "ignore_info_flags": [],
+                        "manual_merge": False,
+                    },
+                    "image_processing": {
+                        "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
+                        "always_fetch_bands": [],
+                        "fuse_func": None,
+                        "manual_merge": False,
+                        "apply_solar_corrections": False,
+                    },
+                    "wcs": {
+                        "default_bands": ["red", "green", "blue"],
+                    },
+                    "identifiers": {
+                        "auth": "s2_l2a",
+                    },
+                    "urls": {
+                        "features": [
+                            {
+                                "url": "http://52.24.100.183:9001/about",
+                                "format": "text/html"
+                            }
+                        ],
+                        "data": [
+                            {
+                                "url": "http://52.24.100.183:9001/stac",
+                                "format": "application/json"
+                            }
+                        ]
+                    },
+                    "styling": {
+                        "default_style": "simple_rgb",
+                        "styles": [style_rgb],
+                    }
+                } ##### End of sentinel2_l2a multi-product definition
             ],
         },   #### End of Sentinel-2 folder
         {
