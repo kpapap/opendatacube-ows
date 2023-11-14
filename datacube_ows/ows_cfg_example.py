@@ -1434,7 +1434,7 @@ ows_cfg = {
         # Which web service(s) should be implemented by this instance
         # Optional, defaults: wms,wmts: True, wcs: False
         "services": {
-            "wms": False,
+            "wms": True,
             "wmts": True,
             "wcs": True
         },
@@ -1525,6 +1525,11 @@ ows_cfg = {
                 "vertical_coord": "y",
             },
             "EPSG:3577": {  # GDA-94, internal representation
+                "geographic": False,
+                "horizontal_coord": "x",
+                "vertical_coord": "y",
+            },
+            "EPSG:32634": {  # 
                 "geographic": False,
                 "horizontal_coord": "x",
                 "vertical_coord": "y",
@@ -1680,23 +1685,7 @@ ows_cfg = {
                     "dynamic": True,
                     "native_crs": "EPSG:32634",
                     "native_resolution": [10.0, 10.0],
-                    "flags": [
-                        {"band": "red",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": False,
-                        },
-                        {"band": "green",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": False,
-                        },
-                        {"band": "blue",
-                        "ignore_time": False,
-                        "ignore_info_flags": [],
-                        "manual_merge": False,
-                        }
-                    ],
+                    "flags": [],
                     "image_processing": {
                         "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
                         "always_fetch_bands": [],
