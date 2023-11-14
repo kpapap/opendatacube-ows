@@ -1724,7 +1724,7 @@ ows_cfg = {
                     # * "day" (daily data with date-resolution time stamps)
                     # * "month" (for monthly summary datasets)
                     # * "year" (for annual summary datasets)
-                    "time_resolution": "raw",
+                    "time_resolution": "solar",
                     # The "native" CRS.  (as used for resource management calculations and WCS metadata)
                     # (Used for resource management calculations and WCS metadata)
                     # Must be in the global "published_CRSs" list.
@@ -1965,9 +1965,6 @@ ows_cfg = {
                         # (Defaults to false - should not be used for NBAR/NBAR-T or other Analysis Ready products
                         "apply_solar_corrections": True
                     },
-                    "wcs": {
-                        "default_bands": ["red", "green", "blue"],
-                    },
                     "styling": {
                         "default_style": "simple_rgb",
                         "styles": [
@@ -1997,9 +1994,6 @@ ows_cfg = {
                     "image_processing": {
                         "extent_mask_func": "datacube_ows.ogc_utils.mask_by_val",
                         "fuse_func": "datacube_ows.wms_utils.wofls_fuser",
-                    },
-                    "wcs": {
-                        "default_bands": ["frequency"],
                     },
                     "styling": {
                         "styles": [
@@ -2046,9 +2040,6 @@ ows_cfg = {
                         "fuse_func": None,
                         "manual_merge": False,
                         "apply_solar_corrections": False,
-                    },
-                    "wcs": {
-                        "default_bands": ["red", "green", "blue"],
                     },
                     "identifiers": {
                         "auth": "s2_nrt_multi",
@@ -2101,9 +2092,6 @@ ows_cfg = {
                         "manual_merge": False,
                         "apply_solar_corrections": False,
                     },
-                    "wcs": {
-                        "default_bands": ["red", "green", "blue"],
-                    },
                     "identifiers": {
                         "auth": "s2_l2a",
                     },
@@ -2144,9 +2132,6 @@ ows_cfg = {
                 "fuse_func": None,
                 "manual_merge": False,
                 "apply_solar_corrections": False,
-            },
-            "wcs": {
-                "default_bands": ["canopy_cover_class"],
             },
             "identifiers": {
                 "auth": "mangrove_canopy_cover",
