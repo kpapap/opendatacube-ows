@@ -1443,8 +1443,7 @@ ows_cfg = {
         # Service URL.
         # A list of fully qualified URLs that the service can return
         # in the GetCapabilities documents based on the requesting url
-        "allowed_urls": ["http://localhost/odc_ows",
-                          "https://localhost/odc_ows",
+        "allowed_urls": ["http://54.188.16.1:8080/odc_ows",
                           "http://127.0.0.1:8000/"],
         # URL that humans can visit to learn more about the service(s) or organization
         # should be fully qualified
