@@ -1463,7 +1463,7 @@ ows_cfg = {
         "contact_info": {
             "person": "Konstantinos Papapanagiotou",
             "organisation": "RENVIS",
-            "position": "CEO",
+            "position": "CEO, DevOps, Cloud Solution Engineer",
             "address": {
                 "type": "postal",
                 "address": "Pasalidi 10",
